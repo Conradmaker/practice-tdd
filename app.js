@@ -27,6 +27,9 @@ app.use('/api', require('./routes'));
 app.get('/', (req, res) => {
   res.send('안녕');
 });
+app.use((err,req,res,next)=>{
+  res.status(500).json({message:err.message})
+})
 app.listen(PORT, () => console.log(`SERVER RUNNING AT http://${HOST}:${PORT}`));
 
 module.exports = app;
