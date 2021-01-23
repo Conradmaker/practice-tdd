@@ -7,11 +7,12 @@ const allProducts = require('../data/all-products.json')
 //productModel.create가 직접영향을 받으면 안되기 때문에 fn을 사용해 mock을 만든어준다.
 productModel.create = jest.fn();
 productModel.find = jest.fn();
+productModel.findById = jest.fn();
 
 let req
 let res
 let next
-
+const productId = '5dsdmmfkdasdasd'
 beforeEach(()=>{
     req = httpMocks.createRequest();
     res = httpMocks.createResponse();
@@ -82,5 +83,40 @@ describe('Product controller read all',()=>{
     productModel.find.mockReturnValue(rejectedPromise);
     await productController.getProducts(req,res,next);
     expect(next).toHaveBeenCalledWith(errorMsg);
+  })
+})
+
+describe('Product controller read by id',()=>{
+  it('should have a getProductbyId',()=>{
+    expect(typeof productController.getProduct).toBe('function')
+  })
+
+  it('should call productModel.findById',async()=>{
+    req.params.productId = productId
+    await productController.getProduct(req,res,next)
+    expect(productModel.findById).toBeCalledWith(productId)
+  })
+
+  it('should return json body and response code 200',async()=>{
+    productModel.findById.mockReturnValue(newProduct);
+    await productController.getProduct(req,res,next);
+    expect(res.statusCode).toBe(200);
+    expect(res._getJSONData()).toStrictEqual(newProduct);
+    expect(res._isEndCalled()).toBeTruthy();
+  })
+
+  it('should return 404 when item does not exist',async()=>{
+    productModel.findById.mockReturnValue(null)
+    await productController.getProduct(req,res,next)
+    expect(res.statusCode).toBe(404)
+    expect(res._isEndCalled).toBeTruthy()
+  })
+
+  it('should handle Error',async()=>{
+    const errorMsg = {message:'error'}
+    const rejectedPromise = Promise.reject(errorMsg);
+    productModel.findById.mockReturnValue(rejectedPromise);
+    await productController.getProduct(req,res,next);
+    expect(next).toHaveBeenCalledWith(errorMsg); 
   })
 })

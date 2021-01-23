@@ -2,7 +2,7 @@ const request = require('supertest');
 const app = require('../../app');
 const newProduct = require('../data/new-product.json')
 
-
+let firstProduct;
 describe('POST /api/products',()=>{
     it("should created",async()=>{
         const response = await request(app)
@@ -33,6 +33,22 @@ describe('GET /api/products',()=>{
         expect(Array.isArray(response.body)).toBeTruthy();
         expect(response.body[0].name).toBeDefined();
         expect(response.body[0].description).toBeDefined();
-        
+        firstProduct = response.body[0]
+    })
+})
+
+describe('GET /api/products/:productId',()=>{
+    it('should return product',async()=>{
+        const res = await request(app)
+            .get(`/api/products/${firstProduct._id}`)
+        expect(res.statusCode).toBe(200)
+        expect(res.body.name).toBe(firstProduct.name)
+        expect(res.body.description).toBe(firstProduct.description)
+    })
+    it('should return 500 error',async()=>{
+        const res = await request(app)
+            .get(`/api/products/wrongId`)
+        expect(res.statusCode).toBe(500)
+        expect(res.body).toStrictEqual({message: 'Cast to ObjectId failed for value "wrongId" at path "_id" for model "Product"'})
     })
 })

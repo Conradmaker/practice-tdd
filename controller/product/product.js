@@ -1,4 +1,3 @@
-const Error = require('../../models/ErrorLog');
 const Product = require('../../models/Products');
 
 const createProduct = async(req, res, next) => {
@@ -16,9 +15,20 @@ const getProducts = async(req,res,next)=>{
     const products = await Product.find({})
     res.status(200).json(products)
   } catch (e) {
-    console.error(e)
     next(e)
   }
 }
 
-module.exports = { createProduct,getProducts };
+const getProduct = async(req,res,next)=>{
+  try {
+    const product = await Product.findById(req.params.productId)
+    if(!product){
+      res.status(404).send(null)
+    }
+    res.status(200).json(product)
+  } catch (e) {
+    next(e)
+  }
+}
+
+module.exports = { createProduct,getProducts,getProduct };
