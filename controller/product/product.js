@@ -23,7 +23,7 @@ const getProduct = async(req,res,next)=>{
   try {
     const product = await Product.findById(req.params.productId)
     if(!product){
-      res.status(404).send(null)
+      return res.status(404).send(null)
     }
     res.status(200).json(product)
   } catch (e) {
@@ -31,4 +31,16 @@ const getProduct = async(req,res,next)=>{
   }
 }
 
-module.exports = { createProduct,getProducts,getProduct };
+const updateProduct = async(req,res,next)=>{
+  try {
+    const product = await Product.findByIdAndUpdate(req.params.productId,req.body,{new:true})
+    if(!product){
+      return res.status(404).send()
+    }
+    res.status(200).json(product)
+  } catch (e) {
+    next(e)
+  }
+}
+
+module.exports = { createProduct,getProducts,getProduct,updateProduct };

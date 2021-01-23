@@ -52,3 +52,21 @@ describe('GET /api/products/:productId',()=>{
         expect(res.body).toStrictEqual({message: 'Cast to ObjectId failed for value "wrongId" at path "_id" for model "Product"'})
     })
 })
+
+describe('PATCH /api/products/:productId',()=>{
+    it('should return prodduct',async()=>{
+        const res = await request(app)
+            .patch(`/api/products/${firstProduct._id}`)
+            .send({name:'updated name',description:'updated desc'})
+
+        expect(res.statusCode).toBe(200);
+        expect(res.body.name).toBe('updated name')
+        expect(res.body.description).toBe('updated desc')
+    })
+    it('should return 500 error',async()=>{
+        const res = await request(app)
+            .patch(`/api/products/wrongId`)
+            expect(res.statusCode).toBe(500)
+            expect(res.body).toStrictEqual({message: 'Cast to ObjectId failed for value "wrongId" at path "_id" for model "Product"'})
+    })
+})
