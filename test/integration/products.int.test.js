@@ -19,9 +19,20 @@ describe('POST /api/products',()=>{
             .post('/api/products')
             .send({name:'name'})
 
-            console.log(response.body)
             expect(response.statusCode).toBe(500);
             expect(response.body).toStrictEqual({message:"Product validation failed: description: Path `description` is required."})
     })
 })
 
+describe('GET /api/products',()=>{
+    it('should return products',async()=>{
+        const response = await request(app)
+            .get('/api/products')
+
+        expect(response.statusCode).toBe(200)
+        expect(Array.isArray(response.body)).toBeTruthy();
+        expect(response.body[0].name).toBeDefined();
+        expect(response.body[0].description).toBeDefined();
+        
+    })
+})

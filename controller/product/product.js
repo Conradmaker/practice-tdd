@@ -9,7 +9,16 @@ const createProduct = async(req, res, next) => {
     //await Error.create({message:e._message,info:e.errors.name})
     next(e);
   }
-  
 };
 
-module.exports = { createProduct };
+const getProducts = async(req,res,next)=>{
+  try {
+    const products = await Product.find({})
+    res.status(200).json(products)
+  } catch (e) {
+    console.error(e)
+    next(e)
+  }
+}
+
+module.exports = { createProduct,getProducts };
