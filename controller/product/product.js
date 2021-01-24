@@ -43,4 +43,16 @@ const updateProduct = async(req,res,next)=>{
   }
 }
 
-module.exports = { createProduct,getProducts,getProduct,updateProduct };
+const deleteProduct =async(req,res,next)=>{
+  try {
+    const product = await Product.findByIdAndRemove(req.params.productId);
+    if(!product){
+      return res.status(404).send('없어요 해당하는 아이디는');
+    }
+    res.status(200).json(product)
+  } catch (e) {
+    next(e)
+  }
+}
+
+module.exports = { createProduct,getProducts,getProduct,updateProduct,deleteProduct };

@@ -54,7 +54,7 @@ describe('GET /api/products/:productId',()=>{
 })
 
 describe('PATCH /api/products/:productId',()=>{
-    it('should return prodduct',async()=>{
+    it('should return product',async()=>{
         const res = await request(app)
             .patch(`/api/products/${firstProduct._id}`)
             .send({name:'updated name',description:'updated desc'})
@@ -62,6 +62,7 @@ describe('PATCH /api/products/:productId',()=>{
         expect(res.statusCode).toBe(200);
         expect(res.body.name).toBe('updated name')
         expect(res.body.description).toBe('updated desc')
+        firstProduct.name = res.body.name
     })
     it('should return 500 error',async()=>{
         const res = await request(app)
@@ -70,3 +71,21 @@ describe('PATCH /api/products/:productId',()=>{
             expect(res.body).toStrictEqual({message: 'Cast to ObjectId failed for value "wrongId" at path "_id" for model "Product"'})
     })
 })
+
+describe('DELETE /api/products/:productId',()=>{
+    it('should return deletedProduct',async()=>{
+        const res = await request(app)
+            .delete(`/api/products/${firstProduct._id}`)
+
+        expect(res.statusCode).toBe(200);
+        expect(res.body.name).toBe(firstProduct.name)
+    })
+
+    it('should return 500 because id was not exist',async()=>{
+        const res = await request(app)
+            .delete(`/api/products/${firstProduct._id}`)
+            console.log(res)
+        expect(res.statusCode).toBe(404);
+    })
+})
+
